@@ -14,6 +14,10 @@ def initiate_driver():
     return browser
 
 def print_list(list, turn_into_txt = False, search_style = False):
+
+    if len(list) <= 0:
+        raise IndexError("Sorry, empty list") 
+
     for idx, val in enumerate(list):
 
         if turn_into_txt == True:
@@ -27,7 +31,9 @@ def print_list(list, turn_into_txt = False, search_style = False):
         print(idx, val)
 
 #driver = initiate_driver()
-url="https://eltoque.com/diez-consejos-para-evitar-hackeos-en-tus-cuentas-de-internet"
+#url="https://eltoque.com/diez-consejos-para-evitar-hackeos-en-tus-cuentas-de-internet"
+
+url="https://eltoque.com/google-y-icloud-dos-alternativas-para-nunca-perder-el-acceso-a-los-contactos"
 req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 
 web_byte = urlopen(req).read()
@@ -43,7 +49,10 @@ title = soup.find("article").find("div", {"class": "article-header"}).find("h1")
 print(title)
     
 # Finding and printing the date of the article
-date = soup.find("article").find("div", {"class": "article-header"}).find_all("p")[1].text
+try:
+    date = soup.find("article").find("div", {"class": "article-header"}).find_all("p")[1].text
+except:
+    date = soup.find("article").find("div", {"class": "article-header"}).find("p").text
 print(date)
 
 # Finding and printing the name of the author(s)
@@ -52,8 +61,20 @@ for x in soup.find("article").find_all("a", {"href": re.compile("author")}):
 
 # Finding the ID of the article
 id = soup.find("article").attrs['class'][0][:-2]
+print(id)
+
+
 # Extracting the contents of the article and printing the emphasized text
 text = soup.find("article").find_all("div", {"class": re.compile(str(id))})[1].find_all(class_=re.compile("ql-align-justify"))
 
-print_list(text, True, False)
-
+try:
+    print_list(text, True, False)
+except IndexError as e:
+    #text = soup.find("article").find_all("div", {"class": re.compile(str(id))})
+    text = soup.find("article").find_all("div", {"class": re.compile(str(id))})[1]
+    for x in text:
+        print(x.prettify())
+    #print(e)
+    #print_list(text, True, False)
+    #print(text.prettify())
+    
